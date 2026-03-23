@@ -42,7 +42,7 @@ describe('Mock API Client', () => {
 
     expect(response.status).toBe(200);
     expect(Array.isArray(data)).toBe(true);
-    expect(data).toHaveLength(2);
+    expect(data).toHaveLength(8);
     expect(global.fetch).not.toHaveBeenCalled();
   });
 
