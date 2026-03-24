@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,8 @@ import { AidItem, fetchAidList, getMockAidList } from '../services/aidApi';
 import { cacheAidList, loadCachedAidList, getCacheTimestamp } from '../services/aidCache';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
 import { OfflineBanner } from '../components/OfflineBanner';
+import { useTheme } from '../theme/ThemeContext';
+import { AppColors } from '../theme/useAppTheme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'AidOverview'>;
 
@@ -25,6 +27,9 @@ const STATUS_COLORS: Record<AidItem['status'], string> = {
 };
 
 export const AidOverviewScreen: React.FC<Props> = ({ navigation }) => {
+  const { colors } = useTheme();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
+
   const [aidList, setAidList] = useState<AidItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -43,7 +48,6 @@ export const AidOverviewScreen: React.FC<Props> = ({ navigation }) => {
       await cacheAidList(fresh);
       setCachedAt(null);
     } catch {
-      // Network failed — try cache, then fall back to mock
       const cached = await loadCachedAidList();
       if (cached && cached.length > 0) {
         setAidList(cached);
@@ -61,7 +65,6 @@ export const AidOverviewScreen: React.FC<Props> = ({ navigation }) => {
     }
   }, []);
 
-  // Sync when connectivity is restored
   const handleReconnect = useCallback(async () => {
     if (!isCached) return;
     setSyncing(true);
@@ -98,7 +101,7 @@ export const AidOverviewScreen: React.FC<Props> = ({ navigation }) => {
   if (loading) {
     return (
       <SafeAreaView style={styles.centered}>
-        <ActivityIndicator size="large" color="#0F172A" />
+        <ActivityIndicator size="large" color={colors.textPrimary} />
         <Text style={styles.loadingText}>Loading aid operations...</Text>
       </SafeAreaView>
     );
@@ -110,7 +113,7 @@ export const AidOverviewScreen: React.FC<Props> = ({ navigation }) => {
 
       {syncing && (
         <View style={styles.syncBanner}>
-          <ActivityIndicator size="small" color="#1D4ED8" />
+          <ActivityIndicator size="small" color={colors.brand.primary} />
           <Text style={styles.syncText}>Syncing latest data...</Text>
         </View>
       )}
@@ -124,7 +127,7 @@ export const AidOverviewScreen: React.FC<Props> = ({ navigation }) => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={() => loadData(true)}
-            tintColor="#0F172A"
+            tintColor={colors.textPrimary}
           />
         }
         ListHeaderComponent={
@@ -146,97 +149,92 @@ export const AidOverviewScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F8FAFC',
-  },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 14,
-    color: '#64748B',
-  },
-  list: {
-    padding: 16,
-    gap: 12,
-  },
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#0F172A',
-    flex: 1,
-    marginRight: 8,
-  },
-  badge: {
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-  },
-  badgeText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
-  cardDescription: {
-    fontSize: 14,
-    color: '#475569',
-    lineHeight: 20,
-    marginBottom: 8,
-  },
-  cardLocation: {
-    fontSize: 12,
-    color: '#94A3B8',
-  },
-  syncBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#EFF6FF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#BFDBFE',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    gap: 8,
-  },
-  syncText: {
-    fontSize: 13,
-    color: '#1D4ED8',
-  },
-  staleNotice: {
-    backgroundColor: '#FFF7ED',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 8,
-  },
-  staleText: {
-    fontSize: 13,
-    color: '#C2410C',
-    textAlign: 'center',
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#94A3B8',
-  },
-});
+const makeStyles = (colors: AppColors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    centered: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 24,
+    },
+    loadingText: {
+      marginTop: 12,
+      fontSize: 14,
+      color: colors.textSecondary,
+    },
+    list: {
+      padding: 16,
+      gap: 12,
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 12,
+      elevation: 2,
+    },
+    cardHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    cardTitle: {
+      fontSize: 16,
+      fontWeight: '700',
+      color: colors.textPrimary,
+      flex: 1,
+      marginRight: 8,
+    },
+    badge: {
+      borderRadius: 6,
+      paddingHorizontal: 8,
+      paddingVertical: 3,
+    },
+    badgeText: {
+      fontSize: 10,
+      fontWeight: '700',
+      color: '#FFFFFF',
+    },
+    cardDescription: {
+      fontSize: 14,
+      color: colors.textSecondary,
+      lineHeight: 20,
+      marginBottom: 8,
+    },
+    cardLocation: {
+      fontSize: 12,
+      color: colors.textSecondary,
+    },
+    syncBanner: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      gap: 8,
+    },
+    syncText: {
+      fontSize: 13,
+      color: colors.brand.primary,
+    },
+    staleNotice: {
+      backgroundColor: colors.surface,
+      borderRadius: 8,
+      padding: 10,
+      marginBottom: 8,
+    },
+    staleText: {
+      fontSize: 13,
+      color: colors.textSecondary,
+      textAlign: 'center',
+    },
+    emptyText: {
+      fontSize: 16,
+      color: colors.textSecondary,
+    },
+  });

@@ -1,11 +1,23 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import React, { useMemo } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation/types';
 import { useWallet } from '../contexts/WalletContext';
+import { useTheme } from '../theme/ThemeContext';
+import { AppColors } from '../theme/useAppTheme';
 
-type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+type HomeScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'Home'
+>;
 
 interface Props {
   navigation: HomeScreenNavigationProp;
@@ -62,6 +74,8 @@ export const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const formattedPublicKey = publicKey
     ? `${publicKey.slice(0, 8)}...${publicKey.slice(-8)}`
     : null;
+  const { colors } = useTheme();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -74,9 +88,14 @@ export const HomeScreen: React.FC<Props> = ({ navigation }) => {
         </View>
 
         <View style={styles.heroSection}>
-          <Text style={styles.heroTitle}>Transparent aid, directly delivered.</Text>
+          <Text style={styles.heroTitle}>
+            Transparent aid, directly delivered.
+          </Text>
           <Text style={styles.description}>
-            Soter utilizes the Stellar network and Soroban smart contracts to ensure aid reaches those in need with 100% transparency. Our automated escrow system guarantees that every donation is tracked and verified on-chain.
+            Soter utilizes the Stellar network and Soroban smart contracts to
+            ensure aid reaches those in need with 100% transparency. Our
+            automated escrow system guarantees that every donation is tracked
+            and verified on-chain.
           </Text>
         </View>
 
@@ -98,7 +117,9 @@ export const HomeScreen: React.FC<Props> = ({ navigation }) => {
           </View>
 
           <Text style={styles.walletDescription}>
-            Connect a compatible Stellar wallet with WalletConnect v2. Soter also listens for deep links so the app can support wallet handoff and transaction signing flows on mobile.
+            Connect a compatible Stellar wallet with WalletConnect v2. Soter
+            also listens for deep links so the app can support wallet handoff
+            and transaction signing flows on mobile.
           </Text>
 
           {publicKey ? (
@@ -113,7 +134,8 @@ export const HomeScreen: React.FC<Props> = ({ navigation }) => {
             </View>
           ) : (
             <Text style={styles.walletHint}>
-              Use Lobstr, Beans, Freighter, or any compatible wallet that can accept WalletConnect links on your device.
+              Use Lobstr, Beans, Freighter, or any compatible wallet that can
+              accept WalletConnect links on your device.
             </Text>
           )}
 
@@ -135,7 +157,9 @@ export const HomeScreen: React.FC<Props> = ({ navigation }) => {
             accessibilityRole="button"
             style={[
               styles.walletButton,
-              isConnected ? styles.walletDisconnectButton : styles.walletConnectButton,
+              isConnected
+                ? styles.walletDisconnectButton
+                : styles.walletConnectButton,
               isBusy && styles.walletButtonDisabled,
             ]}
             onPress={isConnected ? disconnectWallet : connectWallet}
@@ -144,7 +168,9 @@ export const HomeScreen: React.FC<Props> = ({ navigation }) => {
           >
             <Text style={styles.walletButtonText}>{walletButtonLabel}</Text>
             {formattedPublicKey ? (
-              <Text style={styles.walletButtonSubtext}>{formattedPublicKey}</Text>
+              <Text style={styles.walletButtonSubtext}>
+                {formattedPublicKey}
+              </Text>
             ) : null}
           </TouchableOpacity>
 
@@ -155,7 +181,9 @@ export const HomeScreen: React.FC<Props> = ({ navigation }) => {
               onPress={reopenWallet}
               activeOpacity={0.7}
             >
-              <Text style={styles.walletSecondaryButtonText}>Reopen Wallet App</Text>
+              <Text style={styles.walletSecondaryButtonText}>
+                Reopen Wallet App
+              </Text>
             </TouchableOpacity>
           ) : null}
         </View>
@@ -171,18 +199,26 @@ export const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
           <TouchableOpacity
             style={styles.secondaryButton}
-            onPress={() => Alert.alert('Coming Soon', 'Coming in a future wave')}
+            onPress={() =>
+              Alert.alert('Coming Soon', 'Coming in a future wave')
+            }
             activeOpacity={0.7}
           >
-            <Text style={styles.secondaryButtonText}>View Aid Overview (Coming Soon)</Text>
+            <Text style={styles.secondaryButtonText}>
+              View Aid Overview (Coming Soon)
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.secondaryButton}
-            onPress={() => Alert.alert('Coming Soon', 'Coming in a future wave')}
+            onPress={() =>
+              Alert.alert('Coming Soon', 'Coming in a future wave')
+            }
             activeOpacity={0.7}
           >
-            <Text style={styles.secondaryButtonText}>View Aid Details (Coming Soon)</Text>
+            <Text style={styles.secondaryButtonText}>
+              View Aid Details (Coming Soon)
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -190,222 +226,218 @@ export const HomeScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#F8FAFC',
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    padding: 24,
-    justifyContent: 'center',
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 40,
-  },
-  title: {
-    fontSize: 48,
-    fontWeight: '900',
-    color: '#0F172A',
-    letterSpacing: -1,
-  },
-  badge: {
-    backgroundColor: '#E2E8F0',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 16,
-    marginTop: 8,
-  },
-  badgeText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#475569',
-    textTransform: 'uppercase',
-  },
-  heroSection: {
-    marginBottom: 48,
-  },
-  heroTitle: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#1E293B',
-    textAlign: 'center',
-    marginBottom: 16,
-    lineHeight: 34,
-  },
-  description: {
-    fontSize: 16,
-    color: '#64748B',
-    textAlign: 'center',
-    lineHeight: 24,
-    paddingHorizontal: 8,
-  },
-  actionContainer: {
-    gap: 16,
-    width: '100%',
-    maxWidth: 400,
-    alignSelf: 'center',
-  },
-  walletCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 32,
-    borderWidth: 1,
-    borderColor: '#DBEAFE',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.08,
-    shadowRadius: 18,
-    elevation: 4,
-  },
-  walletHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: 12,
-    marginBottom: 12,
-  },
-  walletTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#0F172A',
-  },
-  walletStatusBadge: {
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  walletStatusIdle: {
-    backgroundColor: '#E2E8F0',
-  },
-  walletStatusPending: {
-    backgroundColor: '#DBEAFE',
-  },
-  walletStatusConnected: {
-    backgroundColor: '#DCFCE7',
-  },
-  walletStatusText: {
-    color: '#0F172A',
-    fontSize: 12,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-  },
-  walletDescription: {
-    fontSize: 15,
-    color: '#475569',
-    lineHeight: 22,
-    marginBottom: 14,
-  },
-  walletKeyCard: {
-    backgroundColor: '#EFF6FF',
-    borderRadius: 14,
-    padding: 14,
-    marginBottom: 14,
-  },
-  walletKeyLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#1D4ED8',
-    textTransform: 'uppercase',
-    marginBottom: 8,
-  },
-  walletKeyValue: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#0F172A',
-  },
-  walletHint: {
-    fontSize: 14,
-    color: '#475569',
-    lineHeight: 20,
-    marginBottom: 14,
-  },
-  walletError: {
-    fontSize: 14,
-    color: '#B91C1C',
-    marginBottom: 12,
-    lineHeight: 20,
-  },
-  walletMeta: {
-    fontSize: 12,
-    color: '#64748B',
-    marginBottom: 10,
-  },
-  walletButton: {
-    borderRadius: 14,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  walletConnectButton: {
-    backgroundColor: '#0F766E',
-  },
-  walletDisconnectButton: {
-    backgroundColor: '#1E293B',
-  },
-  walletButtonDisabled: {
-    opacity: 0.7,
-  },
-  walletButtonText: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
-  walletButtonSubtext: {
-    marginTop: 6,
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#CCFBF1',
-  },
-  walletSecondaryButton: {
-    marginTop: 12,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: '#BFDBFE',
-    paddingVertical: 14,
-    alignItems: 'center',
-    backgroundColor: '#F8FAFC',
-  },
-  walletSecondaryButtonText: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#1D4ED8',
-  },
-  primaryButton: {
-    backgroundColor: '#3B82F6',
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    shadowColor: '#3B82F6',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  primaryButtonText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '700',
-  },
-  secondaryButton: {
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#E2E8F0',
-  },
-  secondaryButtonText: {
-    color: '#475569',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  buttonWrapper: {
-    marginBottom: 16,
-    width: '100%',
-    maxWidth: 300,
-  },
-});
+const makeStyles = (colors: AppColors) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    scrollContainer: {
+      flexGrow: 1,
+      padding: 24,
+      justifyContent: 'center',
+    },
+    header: {
+      alignItems: 'center',
+      marginBottom: 40,
+    },
+    title: {
+      fontSize: 48,
+      fontWeight: '900',
+      color: colors.textPrimary,
+      letterSpacing: -1,
+    },
+    badge: {
+      backgroundColor: colors.border,
+      paddingHorizontal: 12,
+      paddingVertical: 4,
+      borderRadius: 16,
+      marginTop: 8,
+    },
+    badgeText: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: colors.textSecondary,
+      textTransform: 'uppercase',
+    },
+    heroSection: {
+      marginBottom: 48,
+    },
+    heroTitle: {
+      fontSize: 28,
+      fontWeight: '700',
+      color: colors.textPrimary,
+      textAlign: 'center',
+      marginBottom: 16,
+      lineHeight: 34,
+    },
+    description: {
+      fontSize: 16,
+      color: colors.textSecondary,
+      textAlign: 'center',
+      lineHeight: 24,
+      paddingHorizontal: 8,
+    },
+    actionContainer: {
+      gap: 16,
+      width: '100%',
+      maxWidth: 400,
+      alignSelf: 'center',
+    },
+    walletCard: {
+      backgroundColor: '#FFFFFF',
+      borderRadius: 20,
+      padding: 20,
+      marginBottom: 32,
+      borderWidth: 1,
+      borderColor: '#DBEAFE',
+      shadowColor: '#0F172A',
+      shadowOffset: { width: 0, height: 10 },
+      shadowOpacity: 0.08,
+      shadowRadius: 18,
+      elevation: 4,
+    },
+    walletHeaderRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      gap: 12,
+      marginBottom: 12,
+    },
+    walletTitle: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: '#0F172A',
+    },
+    walletStatusBadge: {
+      borderRadius: 999,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+    },
+    walletStatusIdle: {
+      backgroundColor: '#E2E8F0',
+    },
+    walletStatusPending: {
+      backgroundColor: '#DBEAFE',
+    },
+    walletStatusConnected: {
+      backgroundColor: '#DCFCE7',
+    },
+    walletStatusText: {
+      color: '#0F172A',
+      fontSize: 12,
+      fontWeight: '700',
+      textTransform: 'uppercase',
+    },
+    walletDescription: {
+      fontSize: 15,
+      color: '#475569',
+      lineHeight: 22,
+      marginBottom: 14,
+    },
+    walletKeyCard: {
+      backgroundColor: '#EFF6FF',
+      borderRadius: 14,
+      padding: 14,
+      marginBottom: 14,
+    },
+    walletKeyLabel: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: '#1D4ED8',
+      textTransform: 'uppercase',
+      marginBottom: 8,
+    },
+    walletKeyValue: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: '#0F172A',
+    },
+    walletHint: {
+      fontSize: 14,
+      color: '#475569',
+      lineHeight: 20,
+      marginBottom: 14,
+    },
+    walletError: {
+      fontSize: 14,
+      color: '#B91C1C',
+      marginBottom: 12,
+      lineHeight: 20,
+    },
+    walletMeta: {
+      fontSize: 12,
+      color: '#64748B',
+      marginBottom: 10,
+    },
+    walletButton: {
+      borderRadius: 14,
+      paddingVertical: 16,
+      paddingHorizontal: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    walletConnectButton: {
+      backgroundColor: '#0F766E',
+    },
+    walletDisconnectButton: {
+      backgroundColor: '#1E293B',
+    },
+    walletButtonDisabled: {
+      opacity: 0.7,
+    },
+    walletButtonText: {
+      fontSize: 17,
+      fontWeight: '700',
+      color: '#FFFFFF',
+    },
+    walletButtonSubtext: {
+      marginTop: 6,
+      fontSize: 12,
+      fontWeight: '600',
+      color: '#CCFBF1',
+    },
+    walletSecondaryButton: {
+      marginTop: 12,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: '#BFDBFE',
+      paddingVertical: 14,
+      alignItems: 'center',
+      backgroundColor: '#F8FAFC',
+    },
+    walletSecondaryButtonText: {
+      fontSize: 15,
+      fontWeight: '700',
+      color: '#1D4ED8',
+    },
+    primaryButton: {
+      backgroundColor: colors.brand.primary,
+      paddingVertical: 16,
+      borderRadius: 12,
+      alignItems: 'center',
+      shadowColor: colors.brand.primary,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.25,
+      shadowRadius: 8,
+      elevation: 4,
+    },
+    primaryButtonText: {
+      color: '#FFFFFF',
+      fontSize: 18,
+      fontWeight: '700',
+    },
+    secondaryButton: {
+      backgroundColor: colors.surface,
+      paddingVertical: 16,
+      borderRadius: 12,
+      alignItems: 'center',
+      borderWidth: 2,
+      borderColor: colors.border,
+    },
+    secondaryButtonText: {
+      color: colors.textSecondary,
+      fontSize: 16,
+      fontWeight: '600',
+    },
+  });
