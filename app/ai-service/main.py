@@ -21,6 +21,11 @@ from api.routes import router as ocr_router
 from config import settings
 import tasks
 from proof_of_life import ProofOfLifeAnalyzer, ProofOfLifeConfig
+from schemas.humanitarian import (
+    HumanitarianVerificationRequest,
+    HumanitarianVerificationResponse,
+)
+from services.humanitarian_verification import HumanitarianVerificationService
 
 limiter = Limiter(key_func=get_remote_address)
 
@@ -60,6 +65,7 @@ proof_of_life_analyzer = ProofOfLifeAnalyzer(
         min_face_size=settings.proof_of_life_min_face_size,
     )
 )
+humanitarian_verification_service = HumanitarianVerificationService()
 
 
 # Request/Response models
@@ -227,6 +233,24 @@ async def analyze_proof_of_life(request: ProofOfLifeRequest):
         raise HTTPException(
             status_code=500, detail="Failed to process proof-of-life request"
         )
+
+
+@app.post("/ai/humanitarian/verify", response_model=HumanitarianVerificationResponse)
+async def verify_humanitarian_claim(request: HumanitarianVerificationRequest):
+    """Verify an aid claim against standardized humanitarian criteria."""
+    logger.info("Processing humanitarian verification request")
+
+    try:
+        result = humanitarian_verification_service.verify_claim(
+            aid_claim=request.aid_claim,
+            supporting_evidence=request.supporting_evidence,
+            context_factors=request.context_factors,
+            provider_preference=request.provider_preference,
+        )
+        return HumanitarianVerificationResponse(success=True, **result)
+    except Exception as e:
+        logger.error("Humanitarian verification failed: %s", str(e), exc_info=True)
+        return HumanitarianVerificationResponse(success=False, error=str(e))
 
 
 @app.get("/ai/status/{task_id}", response_model=TaskStatusResponse)
