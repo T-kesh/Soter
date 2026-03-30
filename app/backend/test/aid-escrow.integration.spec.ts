@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigService } from '@nestjs/config';
 import { AidEscrowService } from '../src/onchain/aid-escrow.service';
 import { AidEscrowController } from '../src/onchain/aid-escrow.controller';
 import { MockOnchainAdapter } from '../src/onchain/onchain.adapter.mock';
@@ -38,9 +37,11 @@ describe('AidEscrow Integration Tests', () => {
     it('should create an aid package', async () => {
       const dto: CreateAidPackageDto = {
         packageId: 'pkg-001',
-        recipientAddress: 'GBUQWP3BOUZX34ULNQG23RQ6F4BFXWBTRSE53XSTE23JMCVOCJGXVSVZ',
+        recipientAddress:
+          'GBUQWP3BOUZX34ULNQG23RQ6F4BFXWBTRSE53XSTE23JMCVOCJGXVSVZ',
         amount: '1000000000',
-        tokenAddress: 'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN',
+        tokenAddress:
+          'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN',
         expiresAt: Math.floor(Date.now() / 1000) + 86400 * 30, // 30 days from now
       };
 
@@ -60,13 +61,16 @@ describe('AidEscrow Integration Tests', () => {
     it('should include operator address in metadata', async () => {
       const dto: CreateAidPackageDto = {
         packageId: 'pkg-002',
-        recipientAddress: 'GBUQWP3BOUZX34ULNQG23RQ6F4BFXWBTRSE53XSTE23JMCVOCJGXVSVZ',
+        recipientAddress:
+          'GBUQWP3BOUZX34ULNQG23RQ6F4BFXWBTRSE53XSTE23JMCVOCJGXVSVZ',
         amount: '500000000',
-        tokenAddress: 'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN',
+        tokenAddress:
+          'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN',
         expiresAt: Math.floor(Date.now() / 1000) + 86400 * 30,
       };
 
-      const operatorAddress = 'GOPER8TORADDRESS00000000000000000000000000000000000000';
+      const operatorAddress =
+        'GOPER8TORADDRESS00000000000000000000000000000000000000';
       const result = await service.createAidPackage(dto, operatorAddress);
 
       expect(result.metadata).toBeDefined();
@@ -82,7 +86,8 @@ describe('AidEscrow Integration Tests', () => {
           'GA5ZSEJYB37JRC5AVCIA5MOP4GZ5DA47EL5QRUVLYEK2OOABEXVR5CV7',
         ],
         amounts: ['1000000000', '500000000'],
-        tokenAddress: 'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN',
+        tokenAddress:
+          'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN',
         expiresIn: 2592000, // 30 days
       };
 
@@ -105,7 +110,8 @@ describe('AidEscrow Integration Tests', () => {
           'GA5ZSEJYB37JRC5AVCIA5MOP4GZ5DA47EL5QRUVLYEK2OOABEXVR5CV7',
         ],
         amounts: ['1000000000'], // Only one amount but two recipients
-        tokenAddress: 'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN',
+        tokenAddress:
+          'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN',
         expiresIn: 2592000,
       };
 
@@ -114,7 +120,9 @@ describe('AidEscrow Integration Tests', () => {
           dto,
           'GOPER8TORADDRESS00000000000000000000000000000000000000',
         ),
-      ).rejects.toThrow('Recipients and amounts arrays must have the same length');
+      ).rejects.toThrow(
+        'Recipients and amounts arrays must have the same length',
+      );
     });
   });
 
@@ -173,16 +181,21 @@ describe('AidEscrow Integration Tests', () => {
       expect(pkg.status).toBeDefined();
       expect(pkg.createdAt).toBeDefined();
       expect(pkg.expiresAt).toBeDefined();
-      expect(['Created', 'Claimed', 'Expired', 'Cancelled', 'Refunded']).toContain(
-        pkg.status,
-      );
+      expect([
+        'Created',
+        'Claimed',
+        'Expired',
+        'Cancelled',
+        'Refunded',
+      ]).toContain(pkg.status);
     });
   });
 
   describe('Service: getAidPackageStats', () => {
     it('should retrieve aggregated statistics', async () => {
       const result = await service.getAidPackageStats({
-        tokenAddress: 'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN',
+        tokenAddress:
+          'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN',
       });
 
       expect(result).toBeDefined();
@@ -195,7 +208,8 @@ describe('AidEscrow Integration Tests', () => {
 
     it('should return statistics as strings', async () => {
       const result = await service.getAidPackageStats({
-        tokenAddress: 'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN',
+        tokenAddress:
+          'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN',
       });
 
       expect(typeof result.aggregates.totalCommitted).toBe('string');
@@ -208,13 +222,19 @@ describe('AidEscrow Integration Tests', () => {
     it('should handle POST /packages', async () => {
       const dto: CreateAidPackageDto = {
         packageId: 'pkg-001',
-        recipientAddress: 'GBUQWP3BOUZX34ULNQG23RQ6F4BFXWBTRSE53XSTE23JMCVOCJGXVSVZ',
+        recipientAddress:
+          'GBUQWP3BOUZX34ULNQG23RQ6F4BFXWBTRSE53XSTE23JMCVOCJGXVSVZ',
         amount: '1000000000',
-        tokenAddress: 'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN',
+        tokenAddress:
+          'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN',
         expiresAt: Math.floor(Date.now() / 1000) + 86400 * 30,
       };
 
-      const req = { user: { address: 'GOPER8TORADDRESS00000000000000000000000000000000000000' } };
+      const req = {
+        user: {
+          address: 'GOPER8TORADDRESS00000000000000000000000000000000000000',
+        },
+      };
       const result = await controller.createAidPackage(dto, req);
 
       expect(result).toBeDefined();
@@ -229,11 +249,16 @@ describe('AidEscrow Integration Tests', () => {
           'GA5ZSEJYB37JRC5AVCIA5MOP4GZ5DA47EL5QRUVLYEK2OOABEXVR5CV7',
         ],
         amounts: ['1000000000', '500000000'],
-        tokenAddress: 'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN',
+        tokenAddress:
+          'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN',
         expiresIn: 2592000,
       };
 
-      const req = { user: { address: 'GOPER8TORADDRESS00000000000000000000000000000000000000' } };
+      const req = {
+        user: {
+          address: 'GOPER8TORADDRESS00000000000000000000000000000000000000',
+        },
+      };
       const result = await controller.batchCreateAidPackages(dto, req);
 
       expect(result).toBeDefined();
@@ -282,13 +307,20 @@ describe('AidEscrow Integration Tests', () => {
   describe('Error handling', () => {
     it('should handle batch create array mismatch', async () => {
       const dto: BatchCreateAidPackagesDto = {
-        recipientAddresses: ['GBUQWP3BOUZX34ULNQG23RQ6F4BFXWBTRSE53XSTE23JMCVOCJGXVSVZ'],
+        recipientAddresses: [
+          'GBUQWP3BOUZX34ULNQG23RQ6F4BFXWBTRSE53XSTE23JMCVOCJGXVSVZ',
+        ],
         amounts: ['1000000000', '500000000'], // Mismatch
-        tokenAddress: 'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN',
+        tokenAddress:
+          'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN',
         expiresIn: 2592000,
       };
 
-      const req = { user: { address: 'GOPER8TORADDRESS00000000000000000000000000000000000000' } };
+      const req = {
+        user: {
+          address: 'GOPER8TORADDRESS00000000000000000000000000000000000000',
+        },
+      };
 
       await expect(
         controller.batchCreateAidPackages(dto, req),

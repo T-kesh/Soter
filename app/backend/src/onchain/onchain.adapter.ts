@@ -156,22 +156,30 @@ export interface OnchainAdapter {
   /**
    * Create an aid package on-chain
    */
-  createAidPackage(params: CreateAidPackageParams): Promise<CreateAidPackageResult>;
+  createAidPackage(
+    params: CreateAidPackageParams,
+  ): Promise<CreateAidPackageResult>;
 
   /**
    * Create multiple aid packages in a batch
    */
-  batchCreateAidPackages(params: BatchCreateAidPackagesParams): Promise<BatchCreateAidPackagesResult>;
+  batchCreateAidPackages(
+    params: BatchCreateAidPackagesParams,
+  ): Promise<BatchCreateAidPackagesResult>;
 
   /**
    * Claim an aid package as recipient
    */
-  claimAidPackage(params: ClaimAidPackageParams): Promise<ClaimAidPackageResult>;
+  claimAidPackage(
+    params: ClaimAidPackageParams,
+  ): Promise<ClaimAidPackageResult>;
 
   /**
    * Disburse an aid package by admin
    */
-  disburseAidPackage(params: DisburseAidPackageParams): Promise<DisburseAidPackageResult>;
+  disburseAidPackage(
+    params: DisburseAidPackageParams,
+  ): Promise<DisburseAidPackageResult>;
 
   /**
    * Get details of an aid package
@@ -181,7 +189,9 @@ export interface OnchainAdapter {
   /**
    * Get aggregate statistics for aid packages
    */
-  getAidPackageCount(params: GetAidPackageCountParams): Promise<GetAidPackageCountResult>;
+  getAidPackageCount(
+    params: GetAidPackageCountParams,
+  ): Promise<GetAidPackageCountResult>;
 
   // Legacy methods - kept for backward compatibility
   createClaim(params: CreateClaimParams): Promise<CreateClaimResult>;

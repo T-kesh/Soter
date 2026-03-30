@@ -71,8 +71,6 @@ import { RedisService } from '../../cache/redis.service';
 
 // }
 
-
-
 const CACHE_TTL_SECONDS = 300; // 5 minutes
 
 const DEFAULT_LOOKBACK_DAYS = 30;
@@ -82,7 +80,6 @@ const FALLBACK_REGION = 'Unknown';
 const FALLBACK_TOKEN = 'UNKNOWN';
 const FALLBACK_LAT = 0;
 const FALLBACK_LNG = 0;
-
 
 interface CampaignMetadata {
   region?: string;
@@ -100,7 +97,6 @@ export class AnalyticsService {
     private readonly redis: RedisService,
   ) {}
 
-
   /**
    * Return aggregated totals for the global dashboard.
    *
@@ -112,7 +108,10 @@ export class AnalyticsService {
    * GET /analytics/global-stats?from=2024-01-01&to=2024-03-31&token=USDC
    */
   async getGlobalStats(query: GlobalStatsQuery = {}): Promise<GlobalStatsDto> {
-    const cacheKey = this.buildCacheKey('global-stats', query as Record<string, unknown>);
+    const cacheKey = this.buildCacheKey(
+      'global-stats',
+      query as Record<string, unknown>,
+    );
 
     const cached = await this.redis.get<GlobalStatsDto>(cacheKey);
     if (cached) {
@@ -138,7 +137,10 @@ export class AnalyticsService {
    * GET /analytics/map-data?region=West+Africa&token=USDC
    */
   async getMapData(query: MapDataQuery = {}): Promise<MapDataDto> {
-    const cacheKey = this.buildCacheKey('map-data', query as Record<string, unknown>);
+    const cacheKey = this.buildCacheKey(
+      'map-data',
+      query as Record<string, unknown>,
+    );
 
     const cached = await this.redis.get<MapDataDto>(cacheKey);
     if (cached) {
@@ -153,7 +155,6 @@ export class AnalyticsService {
     return result;
   }
 
-
   private async computeGlobalStats(
     query: GlobalStatsQuery,
   ): Promise<GlobalStatsDto> {
@@ -167,9 +168,7 @@ export class AnalyticsService {
         status: ClaimStatus.disbursed,
         createdAt: { gte: startDate, lte: endDate },
         campaign: {
-          ...(region || token
-            ? this.buildMetadataFilter(region, token)
-            : {}),
+          ...(region || token ? this.buildMetadataFilter(region, token) : {}),
         },
       },
       select: {
@@ -192,7 +191,7 @@ export class AnalyticsService {
       },
     });
 
-    //  Aggregate in JS (avoids complex Prisma JSON path queries) 
+    //  Aggregate in JS (avoids complex Prisma JSON path queries)
 
     let totalAidDisbursed = 0;
     const uniqueRecipients = new Set<string>();
@@ -265,7 +264,7 @@ export class AnalyticsService {
     };
   }
 
-  // Private — map data computation 
+  // Private — map data computation
 
   private async computeMapData(query: MapDataQuery): Promise<MapDataDto> {
     const { region, token, status } = query;
@@ -280,9 +279,7 @@ export class AnalyticsService {
       where: {
         status: claimStatus,
         campaign: {
-          ...(region || token
-            ? this.buildMetadataFilter(region, token)
-            : {}),
+          ...(region || token ? this.buildMetadataFilter(region, token) : {}),
         },
       },
       select: {
@@ -295,7 +292,7 @@ export class AnalyticsService {
       },
     });
 
-    const points: MapDataPoint[] = claims.map((claim) => {
+    const points: MapDataPoint[] = claims.map(claim => {
       const meta = (claim.campaign.metadata ?? {}) as CampaignMetadata;
 
       return {
@@ -314,7 +311,6 @@ export class AnalyticsService {
     return { points, computedAt: new Date().toISOString() };
   }
 
- 
   private buildMetadataFilter(
     region?: string,
     token?: string,
@@ -342,7 +338,6 @@ export class AnalyticsService {
     return conditions.length === 1 ? conditions[0] : { AND: conditions };
   }
 
-
   private resolveDateRange(
     from?: string,
     to?: string,
@@ -363,7 +358,10 @@ export class AnalyticsService {
    *
    * Example: "analytics:global-stats:from=2024-01-01:token=USDC"
    */
-  private buildCacheKey(endpoint: string, query: Record<string, unknown>): string {
+  private buildCacheKey(
+    endpoint: string,
+    query: Record<string, unknown>,
+  ): string {
     const sorted = Object.entries(query)
       .filter(([, v]) => v !== undefined && v !== null && v !== '')
       .sort(([a], [b]) => a.localeCompare(b))
@@ -372,7 +370,6 @@ export class AnalyticsService {
 
     return `analytics:${endpoint}${sorted ? ':' + sorted : ''}`;
   }
-
 
   private anonymiseId(id: string): string {
     return createHash('sha256').update(id).digest('hex').slice(0, 12);

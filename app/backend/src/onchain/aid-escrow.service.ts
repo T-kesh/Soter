@@ -20,16 +20,14 @@ export class AidEscrowService {
   private readonly logger = new Logger(AidEscrowService.name);
 
   constructor(
-    @Inject(ONCHAIN_ADAPTER_TOKEN) private readonly onchainAdapter: OnchainAdapter,
+    @Inject(ONCHAIN_ADAPTER_TOKEN)
+    private readonly onchainAdapter: OnchainAdapter,
   ) {}
 
   /**
    * Create a single aid package
    */
-  async createAidPackage(
-    dto: CreateAidPackageDto,
-    operatorAddress: string,
-  ) {
+  async createAidPackage(dto: CreateAidPackageDto, operatorAddress: string) {
     this.logger.debug('Creating aid package:', {
       packageId: dto.packageId,
       recipient: dto.recipientAddress,
@@ -65,7 +63,9 @@ export class AidEscrowService {
     });
 
     if (dto.recipientAddresses.length !== dto.amounts.length) {
-      throw new Error('Recipients and amounts arrays must have the same length');
+      throw new Error(
+        'Recipients and amounts arrays must have the same length',
+      );
     }
 
     const result = await this.onchainAdapter.batchCreateAidPackages({
@@ -87,10 +87,7 @@ export class AidEscrowService {
   /**
    * Claim an aid package as recipient
    */
-  async claimAidPackage(
-    dto: ClaimAidPackageDto,
-    recipientAddress: string,
-  ) {
+  async claimAidPackage(dto: ClaimAidPackageDto, recipientAddress: string) {
     this.logger.debug('Claiming aid package:', {
       packageId: dto.packageId,
       recipient: recipientAddress,
@@ -156,7 +153,10 @@ export class AidEscrowService {
    * Get aggregated statistics for aid packages
    */
   async getAidPackageStats(dto: GetAidPackageStatsDto) {
-    this.logger.debug('Retrieving aid package statistics for token:', dto.tokenAddress);
+    this.logger.debug(
+      'Retrieving aid package statistics for token:',
+      dto.tokenAddress,
+    );
 
     const result = await this.onchainAdapter.getAidPackageCount({
       token: dto.tokenAddress,

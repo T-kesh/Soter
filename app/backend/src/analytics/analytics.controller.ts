@@ -69,7 +69,6 @@ export class AnalyticsController {
 
   constructor(private readonly analyticsService: AnalyticsService) {}
 
- 
   @Get('global-stats')
   @HttpCode(HttpStatus.OK)
   async getGlobalStats(
@@ -83,7 +82,6 @@ export class AnalyticsController {
     return this.analyticsService.getGlobalStats(query);
   }
 
- 
   @Get('map-data')
   @HttpCode(HttpStatus.OK)
   async getMapData(

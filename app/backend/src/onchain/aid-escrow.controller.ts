@@ -6,7 +6,6 @@ import {
   Param,
   HttpCode,
   HttpStatus,
-  UseGuards,
   Req,
   BadRequestException,
   Logger,
@@ -25,10 +24,6 @@ import { AidEscrowService } from './aid-escrow.service';
 import {
   CreateAidPackageDto,
   BatchCreateAidPackagesDto,
-  ClaimAidPackageDto,
-  DisburseAidPackageDto,
-  GetAidPackageDto,
-  GetAidPackageStatsDto,
 } from './dto/aid-escrow.dto';
 import { SorobanErrorMapper } from './utils/soroban-error.mapper';
 
@@ -73,8 +68,13 @@ export class AidEscrowController {
     },
   })
   @ApiBadRequestResponse({ description: 'Invalid input parameters.' })
-  @ApiInternalServerErrorResponse({ description: 'Blockchain transaction failed.' })
-  async createAidPackage(@Body() dto: CreateAidPackageDto, @Req() req: any): Promise<any> {
+  @ApiInternalServerErrorResponse({
+    description: 'Blockchain transaction failed.',
+  })
+  async createAidPackage(
+    @Body() dto: CreateAidPackageDto,
+    @Req() req: any,
+  ): Promise<any> {
     try {
       const operatorAddress = req.user?.address || 'admin';
       return await this.aidEscrowService.createAidPackage(dto, operatorAddress);
@@ -114,8 +114,13 @@ export class AidEscrowController {
   @ApiBadRequestResponse({
     description: 'Invalid input or mismatched arrays.',
   })
-  @ApiInternalServerErrorResponse({ description: 'Blockchain transaction failed.' })
-  async batchCreateAidPackages(@Body() dto: BatchCreateAidPackagesDto, @Req() req: any): Promise<any> {
+  @ApiInternalServerErrorResponse({
+    description: 'Blockchain transaction failed.',
+  })
+  async batchCreateAidPackages(
+    @Body() dto: BatchCreateAidPackagesDto,
+    @Req() req: any,
+  ): Promise<any> {
     try {
       if (dto.recipientAddresses.length !== dto.amounts.length) {
         throw new BadRequestException(
@@ -124,7 +129,10 @@ export class AidEscrowController {
       }
 
       const operatorAddress = req.user?.address || 'admin';
-      return await this.aidEscrowService.batchCreateAidPackages(dto, operatorAddress);
+      return await this.aidEscrowService.batchCreateAidPackages(
+        dto,
+        operatorAddress,
+      );
     } catch (error) {
       this.logger.error('Failed to batch create aid packages:', error);
       this.errorMapper.throwMappedError(error);
@@ -154,16 +162,20 @@ export class AidEscrowController {
         amountClaimed: '1000000000',
         metadata: {
           contractId: 'CBAA...',
-          recipient:
-            'GBUQWP3BOUZX34ULNQG23RQ6F4BFXWBTRSE53XSTE23JMCVOCJGXVSVZ',
+          recipient: 'GBUQWP3BOUZX34ULNQG23RQ6F4BFXWBTRSE53XSTE23JMCVOCJGXVSVZ',
         },
       },
     },
   })
   @ApiBadRequestResponse({ description: 'Package not found or not claimable.' })
   @ApiNotFoundResponse({ description: 'Package does not exist.' })
-  @ApiInternalServerErrorResponse({ description: 'Blockchain transaction failed.' })
-  async claimAidPackage(@Param('id') packageId: string, @Req() req: any): Promise<any> {
+  @ApiInternalServerErrorResponse({
+    description: 'Blockchain transaction failed.',
+  })
+  async claimAidPackage(
+    @Param('id') packageId: string,
+    @Req() req: any,
+  ): Promise<any> {
     try {
       const recipientAddress = req.user?.address;
       if (!recipientAddress) {
@@ -208,10 +220,17 @@ export class AidEscrowController {
       },
     },
   })
-  @ApiBadRequestResponse({ description: 'Package not found or not disbursable.' })
+  @ApiBadRequestResponse({
+    description: 'Package not found or not disbursable.',
+  })
   @ApiNotFoundResponse({ description: 'Package does not exist.' })
-  @ApiInternalServerErrorResponse({ description: 'Blockchain transaction failed.' })
-  async disburseAidPackage(@Param('id') packageId: string, @Req() req: any): Promise<any> {
+  @ApiInternalServerErrorResponse({
+    description: 'Blockchain transaction failed.',
+  })
+  async disburseAidPackage(
+    @Param('id') packageId: string,
+    @Req() req: any,
+  ): Promise<any> {
     try {
       const operatorAddress = req.user?.address || 'admin';
       return await this.aidEscrowService.disburseAidPackage(
@@ -232,7 +251,8 @@ export class AidEscrowController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Get aid package details',
-    description: 'Retrieves the full details of an aid package including status, amount, and expiration.',
+    description:
+      'Retrieves the full details of an aid package including status, amount, and expiration.',
   })
   @ApiOkResponse({
     description: 'Package details retrieved successfully.',
@@ -255,7 +275,9 @@ export class AidEscrowController {
     },
   })
   @ApiNotFoundResponse({ description: 'Package not found.' })
-  @ApiInternalServerErrorResponse({ description: 'Failed to retrieve package.' })
+  @ApiInternalServerErrorResponse({
+    description: 'Failed to retrieve package.',
+  })
   async getAidPackage(@Param('id') packageId: string): Promise<any> {
     try {
       return await this.aidEscrowService.getAidPackage({ packageId });
@@ -290,12 +312,15 @@ export class AidEscrowController {
     },
   })
   @ApiBadRequestResponse({ description: 'Invalid token address.' })
-  @ApiInternalServerErrorResponse({ description: 'Failed to retrieve statistics.' })
+  @ApiInternalServerErrorResponse({
+    description: 'Failed to retrieve statistics.',
+  })
   async getAidPackageStats(): Promise<any> {
     try {
       // For now, return aggregates for a default token
       // In production, this should be parameterized or determined from context
-      const defaultTokenAddress = 'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN';
+      const defaultTokenAddress =
+        'GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ5LKG3FZTSZ3NYNEJBBENSN';
       return await this.aidEscrowService.getAidPackageStats({
         tokenAddress: defaultTokenAddress,
       });

@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { createHash } from 'crypto';
 import {
   OnchainAdapter,
   InitEscrowParams,
@@ -76,7 +77,9 @@ export class SorobanAdapter implements OnchainAdapter {
       return this.sorobanLib;
     } catch (error) {
       this.logger.error('Failed to load Soroban SDK:', error);
-      throw new Error('Soroban SDK not available. Install: npm install stellar');
+      throw new Error(
+        'Soroban SDK not available. Install: npm install stellar',
+      );
     }
   }
 
@@ -106,8 +109,8 @@ export class SorobanAdapter implements OnchainAdapter {
     this.logger.debug('Initializing escrow with admin:', params.adminAddress);
 
     try {
-      const sdk = await this.loadSorobanSDK();
-      const client = await this.getRpcClient();
+      const _sdk = await this.loadSorobanSDK();
+      const _client = await this.getRpcClient();
 
       // Note: Actual implementation would require signing the transaction
       // with the contract owner's keypair and submitting to the network.
@@ -145,8 +148,8 @@ export class SorobanAdapter implements OnchainAdapter {
     });
 
     try {
-      const sdk = await this.loadSorobanSDK();
-      const client = await this.getRpcClient();
+      const _sdk = await this.loadSorobanSDK();
+      const _client = await this.getRpcClient();
 
       // Implementation would call contract's create_package method
       // This is a placeholder showing the expected response
@@ -182,16 +185,14 @@ export class SorobanAdapter implements OnchainAdapter {
     });
 
     try {
-      const sdk = await this.loadSorobanSDK();
-      const client = await this.getRpcClient();
+      const _sdk = await this.loadSorobanSDK();
+      const _client = await this.getRpcClient();
 
       // Implementation would call contract's batch_create_packages method
       const packageIds = params.recipientAddresses.map((_, index) =>
         index.toString(),
       );
-      const transactionHash = this.generateMockHash(
-        `batch-${Date.now()}`,
-      );
+      const transactionHash = this.generateMockHash(`batch-${Date.now()}`);
 
       return {
         packageIds,
@@ -220,8 +221,8 @@ export class SorobanAdapter implements OnchainAdapter {
     });
 
     try {
-      const sdk = await this.loadSorobanSDK();
-      const client = await this.getRpcClient();
+      const _sdk = await this.loadSorobanSDK();
+      const _client = await this.getRpcClient();
 
       // Implementation would call contract's claim method
       const transactionHash = this.generateMockHash(
@@ -256,8 +257,8 @@ export class SorobanAdapter implements OnchainAdapter {
     });
 
     try {
-      const sdk = await this.loadSorobanSDK();
-      const client = await this.getRpcClient();
+      const _sdk = await this.loadSorobanSDK();
+      const _client = await this.getRpcClient();
 
       // Implementation would call contract's disburse method
       const transactionHash = this.generateMockHash(
@@ -289,8 +290,8 @@ export class SorobanAdapter implements OnchainAdapter {
     this.logger.debug('Getting aid package:', params.packageId);
 
     try {
-      const sdk = await this.loadSorobanSDK();
-      const client = await this.getRpcClient();
+      const _sdk = await this.loadSorobanSDK();
+      const _client = await this.getRpcClient();
 
       // Implementation would call contract's get_package method
       // For now, returning a mock response structure
@@ -319,11 +320,14 @@ export class SorobanAdapter implements OnchainAdapter {
     params: GetAidPackageCountParams,
   ): Promise<GetAidPackageCountResult> {
     this.ensureContractId();
-    this.logger.debug('Getting aid package aggregates for token:', params.token);
+    this.logger.debug(
+      'Getting aid package aggregates for token:',
+      params.token,
+    );
 
     try {
-      const sdk = await this.loadSorobanSDK();
-      const client = await this.getRpcClient();
+      const _sdk = await this.loadSorobanSDK();
+      const _client = await this.getRpcClient();
 
       // Implementation would call contract's get_aggregates method
       return {
@@ -384,8 +388,7 @@ export class SorobanAdapter implements OnchainAdapter {
    * Helper to generate deterministic hashes (used until actual SDK integration)
    */
   private generateMockHash(input: string): string {
-    const crypto = require('crypto');
-    const hash = crypto.createHash('sha256').update(input).digest('hex');
+    const hash = createHash('sha256').update(input).digest('hex');
     return hash.substring(0, 64).toUpperCase();
   }
 }

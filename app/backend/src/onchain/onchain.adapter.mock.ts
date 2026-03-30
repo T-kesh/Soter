@@ -70,7 +70,9 @@ export class MockOnchainAdapter implements OnchainAdapter {
     };
   }
 
-  async createAidPackage(params: CreateAidPackageParams): Promise<CreateAidPackageResult> {
+  async createAidPackage(
+    params: CreateAidPackageParams,
+  ): Promise<CreateAidPackageResult> {
     await Promise.resolve();
     const transactionHash = this.generateMockHash(
       `create-package-${params.packageId}-${Date.now()}`,
@@ -93,7 +95,9 @@ export class MockOnchainAdapter implements OnchainAdapter {
     };
   }
 
-  async batchCreateAidPackages(params: BatchCreateAidPackagesParams): Promise<BatchCreateAidPackagesResult> {
+  async batchCreateAidPackages(
+    params: BatchCreateAidPackagesParams,
+  ): Promise<BatchCreateAidPackagesResult> {
     await Promise.resolve();
     const packageIds = params.recipientAddresses.map((_, index) => `${index}`);
     const transactionHash = this.generateMockHash(
@@ -114,7 +118,9 @@ export class MockOnchainAdapter implements OnchainAdapter {
     };
   }
 
-  async claimAidPackage(params: ClaimAidPackageParams): Promise<ClaimAidPackageResult> {
+  async claimAidPackage(
+    params: ClaimAidPackageParams,
+  ): Promise<ClaimAidPackageResult> {
     await Promise.resolve();
     const transactionHash = this.generateMockHash(
       `claim-package-${params.packageId}-${params.recipientAddress}-${Date.now()}`,
@@ -134,7 +140,9 @@ export class MockOnchainAdapter implements OnchainAdapter {
     };
   }
 
-  async disburseAidPackage(params: DisburseAidPackageParams): Promise<DisburseAidPackageResult> {
+  async disburseAidPackage(
+    params: DisburseAidPackageParams,
+  ): Promise<DisburseAidPackageResult> {
     await Promise.resolve();
     const transactionHash = this.generateMockHash(
       `disburse-package-${params.packageId}-${Date.now()}`,
@@ -154,7 +162,9 @@ export class MockOnchainAdapter implements OnchainAdapter {
     };
   }
 
-  async getAidPackage(params: GetAidPackageParams): Promise<GetAidPackageResult> {
+  async getAidPackage(
+    params: GetAidPackageParams,
+  ): Promise<GetAidPackageResult> {
     await Promise.resolve();
 
     const mockPackage: AidPackage = {
@@ -176,7 +186,9 @@ export class MockOnchainAdapter implements OnchainAdapter {
     };
   }
 
-  async getAidPackageCount(params: GetAidPackageCountParams): Promise<GetAidPackageCountResult> {
+  async getAidPackageCount(
+    _params: GetAidPackageCountParams,
+  ): Promise<GetAidPackageCountResult> {
     await Promise.resolve();
 
     return {

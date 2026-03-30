@@ -1,4 +1,7 @@
-import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
 /**
  * Maps Soroban contract errors to standardized backend error responses
@@ -8,7 +11,10 @@ export class SorobanErrorMapper {
   /**
    * Soroban contract error codes from AidEscrow (Rust contract)
    */
-  private readonly contractErrors: Record<number, { code: number; message: string }> = {
+  private readonly contractErrors: Record<
+    number,
+    { code: number; message: string }
+  > = {
     1: { code: 400, message: 'Escrow not initialized' },
     2: { code: 409, message: 'Escrow already initialized' },
     3: { code: 403, message: 'Not authorized to perform this action' },
@@ -20,7 +26,10 @@ export class SorobanErrorMapper {
     9: { code: 400, message: 'Insufficient funds in escrow' },
     10: { code: 409, message: 'Package ID already exists' },
     11: { code: 400, message: 'Invalid state transition' },
-    12: { code: 400, message: 'Recipients and amounts arrays have different lengths' },
+    12: {
+      code: 400,
+      message: 'Recipients and amounts arrays have different lengths',
+    },
     13: { code: 400, message: 'Insufficient surplus funds' },
     14: { code: 503, message: 'Contract is paused' },
   };
@@ -176,7 +185,10 @@ export class SorobanErrorMapper {
     const errorMap: Record<string, { code: number; message: string }> = {
       NotInitialized: { code: 400, message: 'Escrow not initialized' },
       AlreadyInitialized: { code: 409, message: 'Escrow already initialized' },
-      NotAuthorized: { code: 403, message: 'Not authorized to perform this action' },
+      NotAuthorized: {
+        code: 403,
+        message: 'Not authorized to perform this action',
+      },
       InvalidAmount: { code: 400, message: 'Invalid amount' },
       PackageNotFound: { code: 404, message: 'Package not found' },
       PackageNotActive: { code: 400, message: 'Package is not active' },

@@ -1,4 +1,3 @@
-
 export interface BreakdownEntry {
   label: string;
   totalAmount: number;
@@ -20,7 +19,6 @@ export interface GlobalStatsDto {
   timeSeries: TimeframeBucket[];
   computedAt: string;
 }
-
 
 export interface MapDataPoint {
   id: string;
