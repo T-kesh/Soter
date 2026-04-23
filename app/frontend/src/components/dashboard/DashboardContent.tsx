@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { DashboardFilters } from './DashboardFilters';
 import { FilteredPackageList } from './FilteredPackageList';
+import { ExportControls } from './ExportControls';
 import type { AidPackageFilters } from '@/types/aid-package';
 
 export function DashboardContent() {
@@ -64,9 +65,7 @@ export function DashboardContent() {
       {/* Header row */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <h2 className="text-lg font-semibold">Aid Packages</h2>
-        <span className="text-xs text-gray-400 dark:text-gray-500 italic">
-          Placeholder — live data in a future wave
-        </span>
+        <ExportControls context="Aid Packages" filters={filters} />
       </div>
 
       {/* Filters */}

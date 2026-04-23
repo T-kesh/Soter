@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useCampaigns, useCreateCampaign, useUpdateCampaign } from '@/hooks/useCampaigns';
 import type { CampaignStatus } from '@/types/campaign';
+import { ExportControls } from '@/components/dashboard/ExportControls';
 
 const ALLOWED_ROLES = ['ngo', 'admin'];
 const userRole = process.env.NEXT_PUBLIC_USER_ROLE ?? 'guest';
@@ -164,9 +165,9 @@ export default function CampaignsPage() {
           </section>
 
           <section className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
               <h2 className="text-xl font-semibold">Active Campaigns</h2>
-              <span className="text-sm text-gray-500">{activeCampaigns.length} items</span>
+              <ExportControls context="Campaigns" filters={{ activeOnly: true }} />
             </div>
 
             {isLoading && <p>Loading campaigns…</p>}
