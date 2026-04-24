@@ -27,8 +27,10 @@ export function LanguageSelector() {
       // Update the locale in the store
       setLocale(newLocale);
 
-      // Navigate to the new locale
-      const newPath = pathname.replace(`/${currentLocale}`, `/${newLocale}`);
+      // Navigate to the new locale - replace the current locale in the path
+      const segments = pathname.split('/');
+      segments[1] = newLocale; // Replace the locale segment
+      const newPath = segments.join('/');
       router.push(newPath);
     });
   };

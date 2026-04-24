@@ -29,22 +29,15 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-  params: { locale },
-}: {
+}: Readonly<{
   children: React.ReactNode;
-  params: { locale: string };
-}) {
-  // Ensure that the incoming `locale` is valid
-  if (!locales.includes(locale as any)) {
-    notFound();
-  }
-
+}>) {
   // Providing all messages to the client
   // side is the easiest way to get started
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen bg-white text-blue-900 dark:bg-slate-950 dark:text-slate-50`}
       >
