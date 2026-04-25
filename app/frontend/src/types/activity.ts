@@ -15,7 +15,7 @@ export interface ActivityItem {
   description: string;
   timestamp: Date;
   currentStep?: string;
-  retryAction?: () => Promise<void>;
+  retryAction?: () => Promise<any>;
   explorerUrl?: string;
   transactionHash?: string;
   errorMessage?: string;
@@ -24,7 +24,7 @@ export interface ActivityItem {
 
 export interface ActivityStore {
   activities: ActivityItem[];
-  addActivity: (activity: Omit<ActivityItem, 'id' | 'timestamp'>) => void;
+  addActivity: (activity: Omit<ActivityItem, 'id' | 'timestamp'>) => string;
   updateActivity: (id: string, updates: Partial<ActivityItem>) => void;
   removeActivity: (id: string) => void;
   clearCompleted: () => void;

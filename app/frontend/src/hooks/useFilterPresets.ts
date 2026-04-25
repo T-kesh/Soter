@@ -2,6 +2,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { useMemo } from 'react';
 import type { FilterPreset, AidPackageFilters, FilterScope } from '@/types/aid-package';
 
 const STORAGE_KEY = 'soter-filter-presets';
@@ -85,7 +86,7 @@ export const useFilterPresetsStore = create<FilterPresetsState>()(
 export function useFilterPresets(scope: FilterScope) {
   const { presets, savePreset, deletePreset } = useFilterPresetsStore();
 
-  const scopedPresets = presets.filter(p => p.scope === scope);
+  const scopedPresets = useMemo(() => presets.filter(p => p.scope === scope), [presets, scope]);
 
   return {
     presets: scopedPresets,

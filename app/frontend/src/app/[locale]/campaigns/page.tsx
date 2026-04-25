@@ -39,6 +39,7 @@ function toCampaignStatus(value: string): CampaignStatus | '' {
 export default function CampaignsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const urlStatus = searchParams.get('status') ?? '';
   const userRole = getUserRole();
   const userRoleLabel = getUserRoleLabel(userRole);
   const { data: campaigns = [], isLoading, isError, error } = useCampaigns();
@@ -61,7 +62,7 @@ export default function CampaignsPage() {
   }
 
   const handleApplyPreset = useCallback(
-    (preset: AidPackageFilters) => {
+    (preset: { status?: string | '' }) => {
       const params = new URLSearchParams();
       if (preset.status) params.set('status', preset.status);
       router.replace(params.size ? `?${params.toString()}` : '?', { scroll: false });

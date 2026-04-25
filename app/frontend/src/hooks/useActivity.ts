@@ -1,5 +1,4 @@
 import { useActivityStore } from '@/lib/activityStore';
-import type { ActivityItem } from '@/types/activity';
 
 /**
  * Utility functions for managing activities in the activity center.
@@ -17,11 +16,8 @@ export function useActivity() {
       onError?: (error: Error) => void;
     }
   ) => {
-    const activityId = crypto.randomUUID();
-
     // Add pending activity
-    addActivity({
-      id: activityId,
+    const activityId = addActivity({
       type: 'transaction',
       status: 'pending',
       title,
@@ -41,13 +37,14 @@ export function useActivity() {
       options?.onSuccess?.(result);
       return result;
     } catch (error) {
+      const err = error instanceof Error ? error : new Error('Unknown error');
       updateActivity(activityId, {
         status: 'failed',
         currentStep: 'Transaction failed',
-        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        errorMessage: err.message,
       });
-      options?.onError?.(error);
-      throw error;
+      options?.onError?.(err);
+      throw err;
     }
   };
 
@@ -61,11 +58,8 @@ export function useActivity() {
       onError?: (error: Error) => void;
     }
   ) => {
-    const activityId = crypto.randomUUID();
-
     // Add pending activity
-    addActivity({
-      id: activityId,
+    const activityId = addActivity({
       type: 'job',
       status: 'processing',
       title,
@@ -83,13 +77,14 @@ export function useActivity() {
       options?.onSuccess?.(result);
       return result;
     } catch (error) {
+      const err = error instanceof Error ? error : new Error('Unknown error');
       updateActivity(activityId, {
         status: 'failed',
         currentStep: 'Failed',
-        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        errorMessage: err.message,
       });
-      options?.onError?.(error);
-      throw error;
+      options?.onError?.(err);
+      throw err;
     }
   };
 

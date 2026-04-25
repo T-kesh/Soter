@@ -16,6 +16,8 @@ export const useActivityStore = create<ActivityStore>()(
         set((state) => ({
           activities: [newActivity, ...state.activities],
         }));
+
+        return newActivity.id;
       },
 
       updateActivity: (id, updates) => {

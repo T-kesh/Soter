@@ -16,9 +16,10 @@ const messages = {
 
 export default getRequestConfig(async ({ locale }) => {
   // Validate that the incoming `locale` parameter is valid
-  if (!locales.includes(locale as any)) notFound();
+  if (!locale || !locales.includes(locale as any)) notFound();
 
   return {
+    locale,
     messages: messages[locale as Locale],
   };
 });

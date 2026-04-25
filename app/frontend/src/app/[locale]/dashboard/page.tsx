@@ -1,11 +1,11 @@
-import React, { Suspense } from 'react';
-import { DashboardContent } from '@/components/dashboard/DashboardContent';
+import React from 'react';
+import dynamic from 'next/dynamic';
 import { MapSection } from '@/components/dashboard/MapSection';
 import { ExportControls } from '@/components/dashboard/ExportControls';
 //import React, { Suspense } from 'react';
 //import { DashboardContent } from '@/components/dashboard/DashboardContent';
 
-{/*function StatCard({ title, description }: { title: string; description: string }) {
+function StatCard({ title, description }: { title: string; description: string }) {
   return (
     <div className="p-6 rounded-lg border border-gray-200 dark:border-gray-800">
       <h3 className="text-lg font-semibold mb-2">{title}</h3>
@@ -15,7 +15,14 @@ import { ExportControls } from '@/components/dashboard/ExportControls';
   );
 }
 
-{/*function PackageListSkeleton() {
+const DashboardContent = dynamic(
+  () => import('@/components/dashboard/DashboardContent').then(m => m.DashboardContent),
+  {
+    loading: () => <PackageListSkeleton />,
+  },
+);
+
+/*function PackageListSkeleton() {
   return (
     <div className="p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800 space-y-5 animate-pulse">
       <div className="h-5 bg-gray-100 dark:bg-gray-800 rounded w-32" />
@@ -28,7 +35,7 @@ import { ExportControls } from '@/components/dashboard/ExportControls';
     </div>
   );
 }
-*/}
+*/
 
 export default function AidDashboard() {
   return (
@@ -66,9 +73,7 @@ export default function AidDashboard() {
           <MapSection />
 
           {/* Search / Filter + Package list — client, needs Suspense for useSearchParams */}
-          <Suspense fallback={<PackageListSkeleton />}>
-            <DashboardContent />
-          </Suspense>
+          <DashboardContent />
 
           {/* Coming-soon note */}
           <p className="text-center text-gray-600 dark:text-gray-400 text-sm">
@@ -86,17 +91,6 @@ export default function AidDashboard() {
           </div>
         </div>
       </main>
-    </div>
-  );
-}
-
-
-function StatCard({ title, description }: { title: string; description: string }) {
-  return (
-    <div className="p-6 rounded-lg border border-gray-200 dark:border-gray-800">
-      <h3 className="text-lg font-semibold mb-2">{title}</h3>
-      <p className="text-3xl font-bold">—</p>
-      <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">{description}</p>
     </div>
   );
 }
