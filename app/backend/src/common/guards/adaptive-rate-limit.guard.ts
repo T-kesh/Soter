@@ -52,7 +52,7 @@ export class AdaptiveRateLimitGuard implements CanActivate {
   private getStrategy(request: any): keyof typeof this.limits {
     const path = request.path ?? request.url ?? '';
     if (path.includes('/search')) return 'search';
-    
+
     const user = request.user;
     if (user) {
       if (user.authType === 'apiKey' || user.authType === 'envApiKey') {
@@ -60,7 +60,7 @@ export class AdaptiveRateLimitGuard implements CanActivate {
       }
       return 'auth';
     }
-    
+
     return 'public';
   }
 
@@ -68,9 +68,11 @@ export class AdaptiveRateLimitGuard implements CanActivate {
     const user = request.user;
     if (user?.id) return user.id;
     if (user?.apiKeyId) return user.apiKeyId;
-    
+
     const forwardedIp =
-      Array.isArray(request.ips) && request.ips.length > 0 ? request.ips[0] : undefined;
+      Array.isArray(request.ips) && request.ips.length > 0
+        ? request.ips[0]
+        : undefined;
     return forwardedIp ?? request.ip ?? 'anonymous';
   }
 }

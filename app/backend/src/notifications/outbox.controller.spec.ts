@@ -64,7 +64,9 @@ describe('OutboxController', () => {
 
       expect(result.success).toBe(true);
       expect(result.data).toEqual([mockRecord]);
-      expect(notificationsServiceMock.getStuckOutboxRecords).toHaveBeenCalledTimes(1);
+      expect(
+        notificationsServiceMock.getStuckOutboxRecords,
+      ).toHaveBeenCalledTimes(1);
     });
 
     it('should return an empty array when no stuck records exist', async () => {
@@ -83,13 +85,17 @@ describe('OutboxController', () => {
 
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockRecord);
-      expect(notificationsServiceMock.getOutboxRecord).toHaveBeenCalledWith('outbox-123');
+      expect(notificationsServiceMock.getOutboxRecord).toHaveBeenCalledWith(
+        'outbox-123',
+      );
     });
 
     it('should throw NotFoundException for a non-existent id', async () => {
       notificationsServiceMock.getOutboxRecord.mockResolvedValueOnce(null);
 
-      await expect(controller.getOne('non-existent')).rejects.toThrow(NotFoundException);
+      await expect(controller.getOne('non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should include the id in the NotFoundException message', async () => {

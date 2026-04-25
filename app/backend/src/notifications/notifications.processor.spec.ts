@@ -12,18 +12,26 @@ describe('NotificationProcessor', () => {
     };
   };
 
-  const makeJob = (overrides: Partial<{ outboxId: string; type: string; recipient: string; message: string }> = {}): Job<any, any, string> => ({
-    id: 'job-test-1',
-    data: {
-      type: NotificationType.EMAIL,
-      recipient: 'test@example.com',
-      message: 'Test message',
-      timestamp: Date.now(),
-      outboxId: 'outbox-test-1',
-      ...overrides,
-    },
-    attemptsMade: 0,
-  } as unknown as Job<any, any, string>);
+  const makeJob = (
+    overrides: Partial<{
+      outboxId: string;
+      type: string;
+      recipient: string;
+      message: string;
+    }> = {},
+  ): Job<any, any, string> =>
+    ({
+      id: 'job-test-1',
+      data: {
+        type: NotificationType.EMAIL,
+        recipient: 'test@example.com',
+        message: 'Test message',
+        timestamp: Date.now(),
+        outboxId: 'outbox-test-1',
+        ...overrides,
+      },
+      attemptsMade: 0,
+    }) as unknown as Job<any, any, string>;
 
   beforeEach(async () => {
     prismaMock = {
@@ -58,9 +66,9 @@ describe('NotificationProcessor', () => {
     });
 
     it('should log a warning and not throw when outboxId is absent', async () => {
-      const job = makeJob({ outboxId: undefined as any });
+      const job = makeJob({ outboxId: undefined });
       // Remove outboxId entirely
-      delete (job.data as any).outboxId;
+      delete job.data.outboxId;
 
       await expect(processor.process(job)).resolves.toBeDefined();
       expect(prismaMock.notificationOutbox.update).not.toHaveBeenCalled();
@@ -76,7 +84,9 @@ describe('NotificationProcessor', () => {
     });
 
     it('should re-throw when prisma.update throws during process', async () => {
-      prismaMock.notificationOutbox.update.mockRejectedValueOnce(new Error('DB error'));
+      prismaMock.notificationOutbox.update.mockRejectedValueOnce(
+        new Error('DB error'),
+      );
       const job = makeJob({ outboxId: 'outbox-abc' });
 
       await expect(processor.process(job)).rejects.toThrow('DB error');
@@ -100,14 +110,16 @@ describe('NotificationProcessor', () => {
 
     it('should log a warning and not throw when outboxId is absent', async () => {
       const job = makeJob();
-      delete (job.data as any).outboxId;
+      delete job.data.outboxId;
 
       await expect(processor.onCompleted(job)).resolves.toBeUndefined();
       expect(prismaMock.notificationOutbox.update).not.toHaveBeenCalled();
     });
 
     it('should swallow prisma errors and not throw', async () => {
-      prismaMock.notificationOutbox.update.mockRejectedValueOnce(new Error('DB error'));
+      prismaMock.notificationOutbox.update.mockRejectedValueOnce(
+        new Error('DB error'),
+      );
       const job = makeJob({ outboxId: 'outbox-abc' });
 
       await expect(processor.onCompleted(job)).resolves.toBeUndefined();
@@ -133,7 +145,7 @@ describe('NotificationProcessor', () => {
 
     it('should log a warning and not throw when outboxId is absent', async () => {
       const job = makeJob();
-      delete (job.data as any).outboxId;
+      delete job.data.outboxId;
       const error = new Error('Job failed');
 
       await expect(processor.onFailed(job, error)).resolves.toBeUndefined();
@@ -143,12 +155,16 @@ describe('NotificationProcessor', () => {
     it('should handle undefined job gracefully', async () => {
       const error = new Error('Job failed');
 
-      await expect(processor.onFailed(undefined, error)).resolves.toBeUndefined();
+      await expect(
+        processor.onFailed(undefined, error),
+      ).resolves.toBeUndefined();
       expect(prismaMock.notificationOutbox.update).not.toHaveBeenCalled();
     });
 
     it('should swallow prisma errors and not throw', async () => {
-      prismaMock.notificationOutbox.update.mockRejectedValueOnce(new Error('DB error'));
+      prismaMock.notificationOutbox.update.mockRejectedValueOnce(
+        new Error('DB error'),
+      );
       const job = makeJob({ outboxId: 'outbox-abc' });
       const error = new Error('Job failed');
 

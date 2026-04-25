@@ -28,7 +28,9 @@ export class InvitesProcessor extends WorkerHost {
     });
 
     if (result.count > 0) {
-      this.logger.log(`Invite expiry check completed. Expired ${result.count} invites.`);
+      this.logger.log(
+        `Invite expiry check completed. Expired ${result.count} invites.`,
+      );
     }
   }
 }

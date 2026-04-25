@@ -45,7 +45,9 @@ export class OutboxController {
   })
   @ApiOkResponse({ description: 'Stuck outbox records returned.' })
   @ApiUnauthorizedResponse({ description: 'Missing or invalid API key.' })
-  @ApiForbiddenResponse({ description: 'Insufficient role (requires admin or operator).' })
+  @ApiForbiddenResponse({
+    description: 'Insufficient role (requires admin or operator).',
+  })
   async listStuck() {
     const records = await this.notificationsService.getStuckOutboxRecords();
     return ApiResponseDto.ok(records, 'Stuck outbox records fetched');
@@ -65,7 +67,9 @@ export class OutboxController {
   @ApiOkResponse({ description: 'Outbox record returned.' })
   @ApiNotFoundResponse({ description: 'Outbox record not found.' })
   @ApiUnauthorizedResponse({ description: 'Missing or invalid API key.' })
-  @ApiForbiddenResponse({ description: 'Insufficient role (requires admin or operator).' })
+  @ApiForbiddenResponse({
+    description: 'Insufficient role (requires admin or operator).',
+  })
   async getOne(@Param('id') id: string) {
     const record = await this.notificationsService.getOutboxRecord(id);
     if (!record) {

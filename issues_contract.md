@@ -1,0 +1,164 @@
+# Wave 4: Smart Contract Issues for Soter
+
+Wave 4 focuses on safer package lifecycle controls, stronger invariants, and more production-ready Soroban contract behavior for `AidEscrow`.
+
+Complexity score scale:
+- **100**: Beginner - Small storage, event, or validation enhancement.
+- **150**: Intermediate - New contract flow with bounded storage impact.
+- **200**: Advanced - Security-sensitive or architecture-level contract behavior.
+
+---
+
+### Issue 1: Campaign-Level Escrow Grouping
+**Complexity Score: 150**
+
+#### Description
+Support grouping packages under a campaign identifier so on-chain data can be queried and reasoned about at the campaign level.
+
+#### Requirements
+- Add `campaign_id` to package storage.
+- Maintain indexes needed to query package IDs by campaign.
+- Add views for campaign package counts and locked totals.
+
+---
+
+### Issue 2: Expiry Extension with Safety Limits
+**Complexity Score: 150**
+
+#### Description
+Allow authorized operators to extend package expiry without recreating a package.
+
+#### Requirements
+- Implement `extend_expiry(env: Env, id: u64, new_expires_at: u64)`.
+- Restrict the action to an authorized admin role and only if the package is still active.
+- Emit an event that records the old and new expiry values.
+
+---
+
+### Issue 3: Recipient Recovery / Delegate Address
+**Complexity Score: 200**
+
+#### Description
+Some recipients may lose access to their primary wallet and need a pre-approved recovery path.
+
+#### Requirements
+- Extend package storage to support an optional delegate or recovery address.
+- Allow claim authorization by either the primary recipient or the approved delegate.
+- Prevent delegate reassignment after claim unless a strict admin-controlled flow is defined and tested.
+
+---
+
+### Issue 4: Partial Claim Support
+**Complexity Score: 200**
+
+#### Description
+Enable controlled partial disbursements for packages that should be claimed in stages instead of all at once.
+
+#### Requirements
+- Track claimed amount and remaining amount per package.
+- Prevent over-claiming and ensure package status transitions remain consistent.
+- Update tests and aggregate views to account for partially claimed packages.
+
+---
+
+### Issue 5: Cancel-and-Reissue Flow
+**Complexity Score: 150**
+
+#### Description
+Operators should be able to cancel a package and reissue a replacement without losing the audit trail.
+
+#### Requirements
+- Implement a reissue flow that links a new package ID to the cancelled original.
+- Ensure locked balances are not double-counted across the old and new package.
+- Emit events that make the relationship between old and new IDs explicit.
+
+---
+
+### Issue 6: Action-Specific Pause Controls
+**Complexity Score: 200**
+
+#### Description
+A single emergency stop is often too blunt. The contract should support pausing only the risky action being mitigated.
+
+#### Requirements
+- Add independent pause flags for actions such as create, claim, and withdraw.
+- Require admin authorization for pause and unpause operations.
+- Add event coverage and tests showing paused actions fail while unaffected actions still work.
+
+---
+
+### Issue 7: Event Schema Version Tagging
+**Complexity Score: 100**
+
+#### Description
+Off-chain indexers need a stable way to detect event payload changes over time.
+
+#### Requirements
+- Add a version marker to emitted events or event topics.
+- Keep the versioning strategy consistent across create, claim, revoke, and admin events.
+- Update snapshot tests to lock in the new schema format.
+
+---
+
+### Issue 8: Per-Campaign Funding Caps
+**Complexity Score: 150**
+
+#### Description
+Campaigns should be prevented from locking more value than their configured on-chain budget allows.
+
+#### Requirements
+- Add campaign budget tracking keyed by `campaign_id` and token.
+- Validate new package creation against the remaining campaign budget.
+- Provide a view for remaining budget and total locked budget per campaign.
+
+---
+
+### Issue 9: Merkle-Based Recipient Allowlist
+**Complexity Score: 200**
+
+#### Description
+Large distributions may require compressing recipient eligibility data instead of storing every recipient list item on-chain.
+
+#### Requirements
+- Add optional Merkle root storage for allowlisted recipient claims.
+- Update claim flow to verify a provided Merkle proof before transfer.
+- Keep the feature optional so the simpler direct-recipient flow still works.
+
+---
+
+### Issue 10: Claim Window Start Time
+**Complexity Score: 100**
+
+#### Description
+Some aid packages should not be claimable immediately after creation.
+
+#### Requirements
+- Add `claim_starts_at` to the package model.
+- Reject claims that arrive before the allowed start time.
+- Cover edge cases where `claim_starts_at` equals creation time or expiry time.
+
+---
+
+### Issue 11: Invariant Assertion Test Suite
+**Complexity Score: 150**
+
+#### Description
+The contract should continuously prove that core accounting invariants hold across every lifecycle transition.
+
+#### Requirements
+- Add tests that assert locked totals, claim totals, and surplus accounting remain consistent.
+- Cover mixed flows including create, claim, revoke, reissue, and partial-claim scenarios where relevant.
+- Fail tests loudly when any storage counter diverges from expected balances.
+
+---
+
+### Issue 12: Token Decimal Safety and Amount Normalization
+**Complexity Score: 150**
+
+#### Description
+Different tokens may use different decimals, and package amounts should be handled consistently across integrations.
+
+#### Requirements
+- Define and document how token amounts are normalized or validated before storage.
+- Reject invalid zero, negative-equivalent, or precision-breaking inputs.
+- Add tests for tokens with different decimal conventions and boundary values.
