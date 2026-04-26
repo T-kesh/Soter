@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Job } from 'bullmq';
 import { VerificationProcessor } from './verification.processor';
 import { VerificationService } from './verification.service';
+import { DlqService } from '../jobs/dlq.service';
 import {
   VerificationJobData,
   VerificationResult,
@@ -34,6 +35,12 @@ describe('VerificationProcessor', () => {
           provide: VerificationService,
           useValue: {
             processVerification: jest.fn().mockResolvedValue(mockResult),
+          },
+        },
+        {
+          provide: DlqService,
+          useValue: {
+            moveToDlq: jest.fn(),
           },
         },
       ],

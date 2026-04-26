@@ -71,6 +71,7 @@ export const WalletConnect: React.FC = () => {
   }, [publicKey, setPublicKey, fetchNetwork, toast]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     if (typeof window === "undefined" || !('FreighterApi' in window)) {
       console.warn("Freighter is not installed or available in the browser.");
