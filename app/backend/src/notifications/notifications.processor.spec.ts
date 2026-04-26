@@ -3,6 +3,7 @@ import { NotificationProcessor } from './notifications.processor';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationType } from './interfaces/notification-job.interface';
 import { Job } from 'bullmq';
+import { DlqService } from '../jobs/dlq.service';
 
 describe('NotificationProcessor', () => {
   let processor: NotificationProcessor;
@@ -46,6 +47,12 @@ describe('NotificationProcessor', () => {
         {
           provide: PrismaService,
           useValue: prismaMock,
+        },
+        {
+          provide: DlqService,
+          useValue: {
+            moveToDlq: jest.fn(),
+          },
         },
       ],
     }).compile();
