@@ -7,6 +7,7 @@ import { MockOnchainAdapter } from './onchain.adapter.mock';
 import { SorobanAdapter } from './soroban.adapter';
 import { OnchainProcessor } from './onchain.processor';
 import { OnchainService } from './onchain.service';
+import { JobsModule } from '../jobs/jobs.module';
 
 /**
  * Factory function to create the appropriate adapter based on configuration
@@ -49,6 +50,7 @@ const onchainAdapterProvider: Provider = {
       }),
       inject: [ConfigService],
     }),
+    JobsModule,
   ],
   providers: [
     MockOnchainAdapter,

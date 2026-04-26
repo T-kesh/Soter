@@ -7,13 +7,18 @@ import {
 } from './interfaces/notification-job.interface';
 import { PrismaService } from '../prisma/prisma.service';
 
+import { DlqService } from '../jobs/dlq.service';
+
 @Processor('notifications', {
   concurrency: parseInt(process.env.QUEUE_CONCURRENCY || '5'),
 })
 export class NotificationProcessor extends WorkerHost {
   private readonly logger = new Logger(NotificationProcessor.name);
 
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly dlqService: DlqService,
+  ) {
     super();
   }
 
@@ -101,6 +106,7 @@ export class NotificationProcessor extends WorkerHost {
       this.logger.error(
         `Notification job ${job.id} for ${job.data.recipient} failed: ${error.message}`,
       );
+      await this.dlqService.moveToDlq('notifications', job, error);
     } else {
       this.logger.error(`Notification job failed: ${error.message}`);
       return;
