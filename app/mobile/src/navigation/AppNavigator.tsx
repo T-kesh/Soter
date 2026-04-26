@@ -5,6 +5,7 @@ import { HomeScreen } from '../screens/HomeScreen';
 import { HealthScreen } from '../screens/HealthScreen';
 import { AidOverviewScreen } from '../screens/AidOverviewScreen';
 import { AidDetailsScreen } from '../screens/AidDetailsScreen';
+import { EvidenceUploadScreen } from '../screens/EvidenceUploadScreen';
 import { ClaimReceiptScreen } from '../screens/ClaimReceiptScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { ScannerScreen } from '../screens/ScannerScreen';
@@ -38,6 +39,11 @@ export const AppNavigator = () => {
         name="AidDetails"
         component={AidDetailsScreen}
         options={{ title: 'Aid Details' }}
+      />
+      <Stack.Screen
+        name="EvidenceUpload"
+        component={EvidenceUploadScreen}
+        options={{ title: 'Upload Evidence' }}
       />
       <Stack.Screen
         name="Scanner"
