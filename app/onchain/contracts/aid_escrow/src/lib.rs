@@ -1,7 +1,5 @@
 #![no_std]
 
-extern crate alloc;
-
 use soroban_sdk::{
     contract, contracterror, contractevent, contractimpl, contracttype, symbol_short, token,
     Address, Env, Map, String, Symbol, Vec,
@@ -1232,7 +1230,7 @@ mod tests {
 
         // Create 7 packages for the recipient
         let operator = admin.clone();
-        let package_ids: alloc::vec::Vec<_> = (0..7)
+        let package_ids: std::vec::Vec<_> = (0..7)
             .map(|i| {
                 client.create_package(
                     &operator,
