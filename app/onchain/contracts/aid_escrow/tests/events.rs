@@ -34,11 +34,12 @@ fn last_event_data(env: &Env, contract_id: &Address, topic: &str) -> Val {
     let expected = sym(env, topic);
     let events = contract_events(env, contract_id);
     for (_, topics, data) in events.iter().rev() {
-        if let Some(first) = topics.first()
-            && let Ok(s) = Symbol::try_from_val(env, &first)
-            && s == expected
-        {
-            return *data;
+        if let Some(first) = topics.first() {
+            if let Ok(s) = Symbol::try_from_val(env, &first) {
+                if s == expected {
+                    return *data;
+                }
+            }
         }
     }
     panic!(

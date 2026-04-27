@@ -1030,20 +1030,20 @@ impl AidEscrow {
             let idx_key = (symbol_short!("pidx"), i);
             if let Some(pkg_id) = env.storage().persistent().get::<_, u64>(&idx_key) {
                 let pkg_key = (symbol_short!("pkg"), pkg_id);
-                if let Some(package) = env.storage().persistent().get::<_, Package>(&pkg_key)
-                    && package.token == token
-                {
-                    match package.status {
-                        PackageStatus::Created => {
-                            total_committed += package.amount;
-                        }
-                        PackageStatus::Claimed => {
-                            total_claimed += package.amount;
-                        }
-                        PackageStatus::Expired
-                        | PackageStatus::Cancelled
-                        | PackageStatus::Refunded => {
-                            total_expired_cancelled += package.amount;
+                if let Some(package) = env.storage().persistent().get::<_, Package>(&pkg_key) {
+                    if package.token == token {
+                        match package.status {
+                            PackageStatus::Created => {
+                                total_committed += package.amount;
+                            }
+                            PackageStatus::Claimed => {
+                                total_claimed += package.amount;
+                            }
+                            PackageStatus::Expired
+                            | PackageStatus::Cancelled
+                            | PackageStatus::Refunded => {
+                                total_expired_cancelled += package.amount;
+                            }
                         }
                     }
                 }
@@ -1067,10 +1067,10 @@ impl AidEscrow {
 
         for id in 0..count {
             let key = (symbol_short!("pkg"), id);
-            if let Some(package) = env.storage().persistent().get::<_, Package>(&key)
-                && package.recipient == recipient
-            {
-                matches += 1;
+            if let Some(package) = env.storage().persistent().get::<_, Package>(&key) {
+                if package.recipient == recipient {
+                    matches += 1;
+                }
             }
         }
 
@@ -1106,10 +1106,10 @@ impl AidEscrow {
         // Iterate from cursor to end_pos
         for id in cursor..end_pos {
             let key = (symbol_short!("pkg"), id);
-            if let Some(package) = env.storage().persistent().get::<_, Package>(&key)
-                && package.recipient == recipient
-            {
-                result.push_back(id);
+            if let Some(package) = env.storage().persistent().get::<_, Package>(&key) {
+                if package.recipient == recipient {
+                    result.push_back(id);
+                }
             }
         }
 

@@ -2,9 +2,9 @@
 
 use aid_escrow::{AidEscrow, AidEscrowClient, Error, PackageStatus};
 use soroban_sdk::{
-    Address, Env,
     testutils::Address as _,
     token::{StellarAssetClient, TokenClient},
+    Address, Env,
 };
 
 fn setup_token(env: &Env, admin: &Address) -> (TokenClient<'static>, StellarAssetClient<'static>) {
