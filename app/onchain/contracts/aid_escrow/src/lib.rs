@@ -1221,7 +1221,7 @@ mod tests {
         // 1. Pause 'create' action
         client.pause_action(&symbol_short!("create"));
         assert!(client.is_action_paused(&symbol_short!("create")));
-        
+
         // Attempt to create package should fail
         let result = client.try_create_package(&admin, &1, &recipient, &1000, &token, &86400);
         assert!(result.is_err());
@@ -1229,33 +1229,33 @@ mod tests {
         // 2. Unpause 'create', pause 'claim'
         client.unpause_action(&symbol_short!("create"));
         client.pause_action(&symbol_short!("claim"));
-        
+
         // Create package should work now
         let package_id = client.create_package(&admin, &1, &recipient, &1000, &token, &86400);
-        
+
         // Claim should fail
         let claim_result = client.try_claim(&package_id);
         assert!(claim_result.is_err());
-        
+
         // 3. Unpause 'claim', pause 'withdraw'
         client.unpause_action(&symbol_short!("claim"));
         client.pause_action(&symbol_short!("withdraw"));
-        
+
         // Claim should work now
         client.claim(&package_id);
-        
+
         // Withdraw surplus should fail
         let withdraw_result = client.try_withdraw_surplus(&admin, &100, &token);
         assert!(withdraw_result.is_err());
-        
+
         // 4. Global pause overrides all
         client.unpause_action(&symbol_short!("withdraw"));
         client.pause();
-        
+
         assert!(client.is_action_paused(&symbol_short!("create")));
         assert!(client.is_action_paused(&symbol_short!("claim")));
         assert!(client.is_action_paused(&symbol_short!("withdraw")));
-        
+
         let result = client.try_create_package(&admin, &2, &recipient, &1000, &token, &86400);
         assert!(result.is_err());
     }
